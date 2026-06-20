@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Copa de Pitágoras – La Copa de la Justicia</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;600&display=swap');
+
+  :root {
+    --gold:    #C8960C;
+    --gold2:   #F0C040;
+    --dark:    #1A1208;
+    --parch:   #F5EDD6;
+    --parch2:  #EDE0C0;
+    --red:     #8B1A1A;
+    --blue:    #1A3A5C;
+    --ink:     #2C1A0E;
+    --light:   #FDF8EE;
+    --stone:   #8A7A5C;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #3A2E1A;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  .poster {
+    width: 794px;          /* A4 width at 96dpi */
+    min-height: 1123px;    /* A4 height at 96dpi */
+    background: var(--parch);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+
+  /* ═══ BORDER ORNAMENTAL ═══ */
+  .poster::before {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border: 3px double var(--gold);
+    pointer-events: none;
+    z-index: 10;
+  }
+  .poster::after {
+    content: '';
+    position: absolute;
+    inset: 16px;
+    border: 1px solid var(--gold);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* ═══ TEXTURA DE FONDO ═══ */
+  .bg-texture {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 10% 15%, rgba(200,150,12,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(139,26,26,0.06) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* ═══ HEADER ═══ */
+  .header {
+    padding: 28px 40px 16px;
+    text-align: center;
+    position: relative;
+    background: linear-gradient(180deg, var(--parch2) 0%, var(--parch) 100%);
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .greek-band {
+    height: 8px;
+    background: var(--gold);
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--gold) 0px, var(--gold) 8px,
+      var(--dark) 8px, var(--dark) 16px,
+      var(--gold) 16px, var(--gold) 18px,
+      var(--dark) 18px, var(--dark) 22px
+    );
+    margin-bottom: 4px;
+  }
+
+  .meander-top {
+    height: 14px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .subtitle-greek {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: var(--stone);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  h1.title {
+    font-family: 'Cinzel', serif;
+    font-size: 34px;
+    font-weight: 900;
+    color: var(--dark);
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  h1.title span.gold { color: var(--gold); }
+
+  .title-sub {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--red);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+
+  .header-meta {
+    font-family: 'EB Garamond', serif;
+    font-size: 12px;
+    color: var(--stone);
+    letter-spacing: 2px;
+  }
+
+  /* ═══ BODY GRID ═══ */
+  .body {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 0;
+    padding: 0 30px 20px;
+  }
+
+  /* ═══ COLUMNA IZQUIERDA ═══ */
+  .col-left {
+    padding: 18px 16px 18px 10px;
+    border-right: 1px solid var(--gold);
+  }
+
+  /* ═══ COLUMNA DERECHA ═══ */
+  .col-right {
+    padding: 18px 10px 18px 20px;
+  }
+
+  /* ═══ SECCIÓN ═══ */
+  .section {
+    margin-bottom: 18px;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 3px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .section-title .icon { font-size: 14px; }
+
+  p, .body-text {
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.65;
+  }
+
+  /* ═══ DIAGRAMA SVG ═══ */
+  .diagram-wrap {
+    background: var(--light);
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .diagram-caption {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--stone);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* ═══ FÓRMULAS ═══ */
+  .formula-box {
+    background: var(--dark);
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    position: relative;
+  }
+
+  .formula-box .formula-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .formula-box .formula {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: #F0D880;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .formula-box .formula sub, .formula-box .formula sup {
+    font-size: 10px;
+  }
+
+  .formula-box .formula-note {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 10px;
+    color: var(--stone);
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  /* ═══ TIMELINE ═══ */
+  .timeline {
+    position: relative;
+    padding-left: 14px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px; top: 6px; bottom: 6px;
+    width: 1px;
+    background: var(--gold);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 5px;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 1px solid var(--dark);
+  }
+
+  .timeline-year {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--red);
+    display: block;
+  }
+
+  .timeline-text {
+    font-family: 'EB Garamond', serif;
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  /* ═══ PASOS ═══ */
+  .steps {
+    counter-reset: step;
+  }
+
+  .step {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 9px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    counter-increment: step;
+    min-width: 22px;
+    height: 22px;
+    background: var(--gold);
+    color: var(--dark);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text {
+    font-family: 'EB Garamond', serif;
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+
+  .step-text strong { color: var(--red); font-weight: 600; }
+
+  /* ═══ DATO DESTACADO ═══ */
+  .highlight-box {
+    background: var(--red);
+    border-left: 4px solid var(--gold);
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
+    margin: 10px 0;
+  }
+
+  .highlight-box p {
+    color: var(--light);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .highlight-box .highlight-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    color: var(--gold2);
+    letter-spacing: 2px;
+    margin-bottom: 3px;
+  }
+
+  /* ═══ TABLA DE VARIABLES ═══ */
+  .var-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'EB Garamond', serif;
+    font-size: 12px;
+  }
+
+  .var-table th {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    text-align: left;
+    padding: 4px 6px;
+    border-bottom: 1px solid var(--gold);
+    text-transform: uppercase;
+  }
+
+  .var-table td {
+    padding: 3px 6px;
+    color: var(--ink);
+    border-bottom: 1px solid rgba(200,150,12,0.2);
+    vertical-align: top;
+  }
+
+  .var-table td:first-child {
+    font-style: italic;
+    color: var(--red);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  /* ═══ FOOTER ═══ */
+  .footer {
+    text-align: center;
+    padding: 10px 40px 24px;
+    border-top: 1px solid var(--gold);
+    margin: 0 30px;
+  }
+
+  .footer .greek-quote {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+
+  .footer .footer-note {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 10px;
+    color: var(--stone);
+    letter-spacing: 1px;
+  }
+
+  /* ═══ PRINT ═══ */
+  @media print {
+    body { background: white; padding: 0; }
+    .poster {
+      box-shadow: none;
+      width: 100%;
+      min-height: 100vh;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="bg-texture"></div>
+
+  <!-- ══════════════ HEADER ══════════════ -->
+  <div class="greek-band"></div>
+  <div class="header">
+    <div class="subtitle-greek">Πυθαγόρας ὁ Σάμιος · Samos, ~570 a.C.</div>
+    <h1 class="title">La <span class="gold">Copa de Pitágoras</span></h1>
+    <div class="title-sub">«Κύλιξ δικαιοσύνης» · La Copa de la Justicia</div>
+    <div class="header-meta">Física del Sifón · Hidrostática · Principio de Pascal</div>
+  </div>
+  <div class="greek-band" style="margin-bottom:0;"></div>
+
+  <!-- ══════════════ BODY ══════════════ -->
+  <div class="body">
+
+    <!-- ╔══════ COLUMNA IZQUIERDA ══════╗ -->
+    <div class="col-left">
+
+      <!-- HISTORIA -->
+      <div class="section">
+        <div class="section-title"><span class="icon">📜</span> Historia</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <span class="timeline-year">~570 a.C.</span>
+            <span class="timeline-text">Nacimiento de <strong>Pitágoras de Samos</strong> (Ἰωνία), filósofo y matemático griego.</span>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-year">~530 a.C.</span>
+            <span class="timeline-text">Funda su escuela en Crotona (Magna Grecia). Según la tradición, diseña la copa para moderar el consumo de vino de sus discípulos.</span>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-year">Siglo IV a.C.</span>
+            <span class="timeline-text">Aristóteles documenta principios hidrostáticos que explican el mecanismo del sifón.</span>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-year">1643</span>
+            <span class="timeline-text">Torricelli demuestra matemáticamente la presión atmosférica, base teórica del sifón.</span>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-year">Actualidad</span>
+            <span class="timeline-text">Se fabrica en cerámica en la isla de Rodas, Grecia. Emblema de la <em>sophrosyne</em> (moderación) pitagórica.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIAGRAMA COPA -->
+      <div class="section">
+        <div class="section-title"><span class="icon">🏺</span> Sección Transversal</div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 220 280" width="220" height="280" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- gradiente copa -->
+              <linearGradient id="cupGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#8A7A5C;stop-opacity:1"/>
+                <stop offset="30%" style="stop-color:#C8A060;stop-opacity:1"/>
+                <stop offset="70%" style="stop-color:#E0C080;stop-opacity:1"/>
+                <stop offset="100%" style="stop-color:#8A7A5C;stop-opacity:1"/>
+              </linearGradient>
+              <!-- gradiente agua -->
+              <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#4A90D9;stop-opacity:0.7"/>
+                <stop offset="100%" style="stop-color:#2A5A99;stop-opacity:0.9"/>
+              </linearGradient>
+              <!-- gradiente columna -->
+              <linearGradient id="colGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#8A7A5C;stop-opacity:1"/>
+                <stop offset="50%" style="stop-color:#C8A060;stop-opacity:1"/>
+                <stop offset="100%" style="stop-color:#8A7A5C;stop-opacity:1"/>
+              </linearGradient>
+            </defs>
+
+            <!-- === BASE COPA === -->
+            <!-- Pie/base -->
+            <ellipse cx="110" cy="256" rx="44" ry="7" fill="#7A6A44" opacity="0.9"/>
+            <rect x="90" y="248" width="40" height="10" rx="3" fill="url(#cupGrad)"/>
+            <!-- Tallo -->
+            <rect x="103" y="220" width="14" height="32" fill="url(#cupGrad)"/>
+            <!-- Cuerpo de la copa (trapecio invertido) -->
+            <path d="M 56 220 L 50 80 L 170 80 L 164 220 Z" fill="url(#cupGrad)" opacity="0.25"/>
+            <!-- Paredes exteriores -->
+            <path d="M 56 220 L 50 80" stroke="#7A6A44" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M 164 220 L 170 80" stroke="#7A6A44" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <!-- Borde superior copa -->
+            <ellipse cx="110" cy="80" rx="60" ry="8" fill="url(#cupGrad)" opacity="0.6"/>
+            <ellipse cx="110" cy="80" rx="60" ry="8" fill="none" stroke="#C8A060" stroke-width="1.5"/>
+            <!-- Parte inferior interior -->
+            <line x1="57" y1="219" x2="163" y2="219" stroke="#7A6A44" stroke-width="3"/>
+
+            <!-- === AGUA (nivel seguro) === -->
+            <!-- Nivel crítico h_c = 130px desde base interna (y=219) => y = 219-130 = 89, pero lo ponemos en y=140 para visualización -->
+            <!-- Nivel actual del líquido: y=145 (por encima de h_c => sifón activo) -->
+            <clipPath id="cupClip">
+              <path d="M 58 220 L 52 82 L 168 82 L 162 220 Z"/>
+            </clipPath>
+            <!-- Agua normal (nivel seguro, debajo de h_c) -->
+            <rect x="52" y="170" width="116" height="49" fill="url(#waterGrad)" clip-path="url(#cupClip)" opacity="0.5"/>
+            <!-- Indicador nivel crítico -->
+            <line x1="58" y1="155" x2="162" y2="155" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="4,3"/>
+            <!-- Agua sobre nivel crítico (activa el sifón) -->
+            <rect x="52" y="130" width="116" height="40" fill="url(#waterGrad)" clip-path="url(#cupClip)" opacity="0.85"/>
+
+            <!-- === COLUMNA CENTRAL SIFÓN === -->
+            <!-- Columna exterior (cerámica) -->
+            <rect x="99" y="88" width="22" height="135" rx="2" fill="url(#colGrad)" opacity="0.9"/>
+            <!-- Interior columna (tubo sifón): forma de U invertida -->
+            <!-- Tubo rama izquierda (baja desde tapa) -->
+            <rect x="103.5" y="92" width="5" height="116" fill="#2A5A99" opacity="0.85"/>
+            <!-- Tubo rama derecha (baja hasta la base con agujero) -->
+            <rect x="112.5" y="92" width="5" height="128" fill="#2A5A99" opacity="0.85"/>
+            <!-- Techo del sifón (U invertida) - conexión en la cima -->
+            <path d="M 103.5 92 Q 110 82 117.5 92" fill="none" stroke="#2A5A99" stroke-width="5" stroke-linecap="round"/>
+            <!-- Cima del sifón (punto crítico) -->
+            <circle cx="110" cy="84" r="3" fill="#FF6B6B"/>
+
+            <!-- Agujero en la base de la columna (salida sifón) -->
+            <ellipse cx="110" cy="220" rx="4" ry="2.5" fill="#1A1208"/>
+            <!-- Salida del líquido por el pie -->
+            <path d="M 108 222 Q 110 240 109 248" stroke="#4A90D9" stroke-width="3" fill="none" opacity="0.8" stroke-linecap="round"/>
+
+            <!-- === COTAS Y ETIQUETAS === -->
+            <!-- Flecha h_c -->
+            <line x1="170" y1="219" x2="170" y2="155" stroke="#FF6B6B" stroke-width="1"/>
+            <polygon points="170,152 167,159 173,159" fill="#FF6B6B"/>
+            <polygon points="170,222 167,215 173,215" fill="#FF6B6B"/>
+            <text x="174" y="192" font-family="Georgia,serif" font-style="italic" font-size="10" fill="#FF6B6B">h<tspan baseline-shift="sub" font-size="7">c</tspan></text>
+
+            <!-- Flecha h_líquido -->
+            <line x1="46" y1="219" x2="46" y2="130" stroke="#4A90D9" stroke-width="1"/>
+            <polygon points="46,127 43,134 49,134" fill="#4A90D9"/>
+            <polygon points="46,222 43,215 49,215" fill="#4A90D9"/>
+            <text x="28" y="178" font-family="Georgia,serif" font-style="italic" font-size="10" fill="#4A90D9">h</text>
+
+            <!-- Etiqueta nivel crítico -->
+            <text x="52" y="152" font-family="Arial" font-size="8" fill="#FF6B6B">Nivel crítico</text>
+
+            <!-- Etiqueta punto crítico del sifón -->
+            <line x1="110" y1="84" x2="135" y2="68" stroke="#FF6B6B" stroke-width="0.8" stroke-dasharray="2,2"/>
+            <text x="136" y="67" font-family="Arial" font-size="8" fill="#FF6B6B">Cima sifón</text>
+
+            <!-- Etiqueta tubo sifón -->
+            <line x1="121" y1="120" x2="150" y2="105" stroke="#4A90D9" stroke-width="0.8" stroke-dasharray="2,2"/>
+            <text x="151" y="104" font-family="Arial" font-size="8" fill="#4A90D9">Tubo sifón</text>
+
+            <!-- Etiqueta columna -->
+            <line x1="99" y1="150" x2="75" y2="138" stroke="#7A6A44" stroke-width="0.8" stroke-dasharray="2,2"/>
+            <text x="32" y="137" font-family="Arial" font-size="8" fill="#7A6A44">Columna</text>
+
+            <!-- Etiqueta salida base -->
+            <text x="115" y="244" font-family="Arial" font-size="8" fill="#2A5A99">Salida</text>
+
+            <!-- Presión atmosférica -->
+            <text x="72" y="76" font-family="Georgia,serif" font-style="italic" font-size="9" fill="#8A7A5C">P₀</text>
+            <line x1="79" y1="74" x2="92" y2="80" stroke="#8A7A5C" stroke-width="0.8"/>
+
+            <!-- Línea base interna -->
+            <line x1="58" y1="219" x2="162" y2="219" stroke="#C8A060" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.6"/>
+          </svg>
+          <div class="diagram-caption">Sección transversal de la Copa de Pitágoras.<br>Rojo: nivel crítico h<sub>c</sub> · Azul: líquido · h > h<sub>c</sub> → sifón activo</div>
+        </div>
+      </div>
+
+    </div>
+    <!-- ╚════════════════════════════════╝ -->
+
+    <!-- ╔══════ COLUMNA DERECHA ══════╗ -->
+    <div class="col-right">
+
+      <!-- PRINCIPIO FÍSICO -->
+      <div class="section">
+        <div class="section-title"><span class="icon">⚗️</span> Principio Físico: El Sifón</div>
+        <p>La copa contiene en su interior una columna hueca con un <strong>tubo en forma de U invertida</strong> (sifón). Cuando el nivel del líquido supera la altura crítica h<sub>c</sub>, la presión hidrostática vence la resistencia atmosférica en la cima del tubo y el sifón se <em>ceba</em>, vaciando completamente la copa.</p>
+      </div>
+
+      <!-- FÓRMULAS -->
+      <div class="section">
+        <div class="section-title"><span class="icon">📐</span> Fundamentos Matemáticos</div>
+
+        <div class="formula-box">
+          <div class="formula-label">1 · Presión Hidrostática (Pascal)</div>
+          <div class="formula">
+            P = P<sub>0</sub> + ρ · g · h
+          </div>
+          <div class="formula-note">
+            P₀ = presión atmosférica (101 325 Pa) · ρ = densidad del líquido (agua: 1 000 kg/m³) · g = 9,81 m/s² · h = altura de la columna de líquido
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-label">2 · Condición de Activación del Sifón</div>
+          <div class="formula">
+            h &gt; h<sub>c</sub> &nbsp;⟹&nbsp; sifón activo
+          </div>
+          <div class="formula-note">
+            h<sub>c</sub> = altura de la cima del tubo en U medida desde el fondo interior de la copa. Mientras h ≤ h<sub>c</sub>, la copa funciona con normalidad.
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-label">3 · Ecuación de Bernoulli (flujo en el sifón)</div>
+          <div class="formula">
+            P<sub>1</sub> + ½ρv<sub>1</sub>² + ρgh<sub>1</sub> = P<sub>2</sub> + ½ρv<sub>2</sub>² + ρgh<sub>2</sub>
+          </div>
+          <div class="formula-note">
+            Puntos 1 (superficie libre) y 2 (salida inferior). La diferencia de altura ∆h = h<sub>1</sub> − h<sub>2</sub> impulsa el flujo; la presión atmosférica actúa igual en ambas superficies.
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-label">4 · Velocidad de Salida (Torricelli, 1643)</div>
+          <div class="formula">
+            v = √(2g · Δh)
+          </div>
+          <div class="formula-note">
+            Δh = diferencia de altura entre superficie libre y salida del sifón. El caudal: Q = A · v = A · √(2g·Δh), donde A = sección del tubo.
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-label">5 · Presión Mínima en la Cima del Sifón</div>
+          <div class="formula">
+            P<sub>cima</sub> = P<sub>0</sub> − ρg(h<sub>c</sub> + H<sub>salida</sub>)
+          </div>
+          <div class="formula-note">
+            El sifón funciona mientras P<sub>cima</sub> > P<sub>vapor</sub> del líquido (para el agua: ~2 340 Pa a 20 °C). Altura máxima teórica del sifón ≈ 10,3 m.
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLA VARIABLES -->
+      <div class="section">
+        <div class="section-title"><span class="icon">🔣</span> Tabla de Variables</div>
+        <table class="var-table">
+          <thead>
+            <tr><th>Símbolo</th><th>Magnitud</th><th>Unidad (SI)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>P, P₀</td><td>Presión / presión atmosférica</td><td>Pa (N/m²)</td></tr>
+            <tr><td>ρ</td><td>Densidad del líquido</td><td>kg/m³</td></tr>
+            <tr><td>g</td><td>Aceleración gravitatoria</td><td>m/s² (9,81)</td></tr>
+            <tr><td>h, h<sub>c</sub></td><td>Altura del líquido / altura crítica</td><td>m</td></tr>
+            <tr><td>v</td><td>Velocidad de salida del fluido</td><td>m/s</td></tr>
+            <tr><td>Q</td><td>Caudal volumétrico</td><td>m³/s</td></tr>
+            <tr><td>A</td><td>Sección transversal del tubo</td><td>m²</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+    <!-- ╚══════════════════════════════╝ -->
+
+  </div>
+
+  <!-- ══════════════ FRANJA INTERMEDIA PASOS ══════════════ -->
+  <div style="background: var(--dark); margin: 0 30px 16px; border: 1px solid var(--gold); border-radius: 4px; padding: 14px 20px;">
+    <div class="section-title" style="color: var(--gold2); border-color: var(--gold2); margin-bottom: 12px;">
+      <span class="icon">⚙️</span> Funcionamiento Paso a Paso
+    </div>
+    <div class="steps" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px 20px;">
+      <div class="step">
+        <div class="step-num" style="background:var(--gold);">1</div>
+        <div class="step-text" style="color:#EDE0C0;">Se vierte líquido. Mientras <strong style="color:var(--gold2);">h ≤ h<sub>c</sub></strong>, la presión en ambas ramas del tubo es igual: el sifón <em>no se activa</em>. La copa funciona normalmente.</div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--gold);">2</div>
+        <div class="step-text" style="color:#EDE0C0;">Al alcanzar <strong style="color:var(--gold2);">h = h<sub>c</sub></strong>, el líquido llega a la cima del tubo. La presión en la rama larga supera la atmosférica y el flujo comienza a caer por la rama inferior.</div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--gold);">3</div>
+        <div class="step-text" style="color:#EDE0C0;">Con <strong style="color:var(--gold2);">h &gt; h<sub>c</sub></strong>, el sifón se ceba completamente. La diferencia de presión ρg·Δh impulsa el flujo de forma continua, <em>vaciando toda la copa</em> hasta la última gota.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ FILA INFERIOR ══════════════ -->
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 0 20px; padding: 0 30px 16px; margin-top:0;">
+
+    <!-- DIAGRAMA FASES -->
+    <div>
+      <div class="section-title" style="margin-bottom:8px;"><span class="icon">📊</span> Diagrama de Fases del Sifón</div>
+      <div class="diagram-wrap" style="padding:8px;">
+        <svg viewBox="0 0 340 120" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#C8A060"/>
+            </marker>
+          </defs>
+          <!-- Ejes -->
+          <line x1="30" y1="10" x2="30" y2="100" stroke="#C8A060" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <line x1="22" y1="95" x2="320" y2="95" stroke="#C8A060" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <!-- Labels ejes -->
+          <text x="6" y="55" font-family="Georgia,serif" font-style="italic" font-size="10" fill="#C8A060" transform="rotate(-90,14,55)">h (altura)</text>
+          <text x="310" y="108" font-family="Georgia,serif" font-style="italic" font-size="10" fill="#C8A060">tiempo</text>
+
+          <!-- Zona verde: llenado normal -->
+          <rect x="31" y="60" width="100" height="35" fill="#2D6A2D" opacity="0.3"/>
+          <!-- Curva llenado -->
+          <path d="M 31 95 Q 70 92 130 60" stroke="#4CAF50" stroke-width="2" fill="none"/>
+
+          <!-- Línea crítica h_c -->
+          <line x1="30" y1="60" x2="310" y2="60" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="5,3"/>
+          <text x="312" y="63" font-family="Georgia,serif" font-style="italic" font-size="9" fill="#FF6B6B">h<tspan baseline-shift="sub" font-size="7">c</tspan></text>
+
+          <!-- Punto de activación -->
+          <circle cx="130" cy="60" r="4" fill="#FF6B6B"/>
+          <text x="112" y="53" font-family="Arial" font-size="8" fill="#FF6B6B">Activación</text>
+          <line x1="130" y1="56" x2="130" y2="50" stroke="#FF6B6B" stroke-width="0.8"/>
+
+          <!-- Zona roja: vaciado rápido -->
+          <rect x="130" y="60" width="80" height="35" fill="#8B1A1A" opacity="0.3"/>
+          <!-- Curva vaciado brusco -->
+          <path d="M 130 60 Q 150 62 170 92 L 210 95" stroke="#FF6B6B" stroke-width="2" fill="none"/>
+
+          <!-- Zona gris: copa vacía -->
+          <rect x="210" y="88" width="100" height="7" fill="#555" opacity="0.4"/>
+          <line x1="210" y1="95" x2="310" y2="95" stroke="#888" stroke-width="2"/>
+
+          <!-- Etiquetas zonas -->
+          <text x="45" y="85" font-family="Arial" font-size="9" fill="#4CAF50">Uso normal</text>
+          <text x="133" y="85" font-family="Arial" font-size="9" fill="#FF6B6B">Vaciado</text>
+          <text x="218" y="90" font-family="Arial" font-size="9" fill="#888">Copa vacía</text>
+
+          <!-- Cota h_c en eje y -->
+          <line x1="26" y1="60" x2="30" y2="60" stroke="#FF6B6B" stroke-width="1"/>
+        </svg>
+        <div class="diagram-caption">Evolución temporal del nivel de líquido: llenado gradual → activación del sifón → vaciado total</div>
+      </div>
+    </div>
+
+    <!-- CURIOSIDADES / FILOSOFÍA -->
+    <div>
+      <div class="section-title" style="margin-bottom:8px;"><span class="icon">🏛️</span> Contexto Filosófico y Aplicaciones</div>
+
+      <div class="highlight-box" style="margin-bottom:10px;">
+        <div class="highlight-title">⚖️ Sophrosyne – La Moderación</div>
+        <p>Para los pitagóricos, la copa encarnaba <em>sophrosyne</em>: virtud de la templanza. Quien llenaba el vaso con codicia («más de lo justo») recibía el castigo inmediato: ver todo su contenido derramado.</p>
+      </div>
+
+      <p style="font-family:'EB Garamond',serif; font-size:12.5px; color:var(--ink); line-height:1.6; margin-bottom:8px;">
+        <strong>El principio matemático subyacente</strong> guarda relación con la idea pitagórica de que los números gobiernan la naturaleza: existe un umbral exacto h<sub>c</sub> —racional, medible— que separa el orden del caos.
+      </p>
+
+      <p style="font-family:'EB Garamond',serif; font-size:12.5px; color:var(--ink); line-height:1.6; margin-bottom:8px;">
+        <strong>Aplicaciones modernas del sifón:</strong> sistemas de irrigación, lavabos y cisternas (el sifón antiolor), impresión de inyección de tinta, transferencia de combustible, control de nivel en depósitos industriales.
+      </p>
+
+      <div style="background: var(--parch2); border: 1px solid var(--gold); border-radius:4px; padding: 8px 12px; font-family:'EB Garamond',serif; font-size:12px; color:var(--ink);">
+        <strong style="color:var(--red);">Dato curioso:</strong> el sifón no requiere bomba. La energía proviene íntegramente de la <em>diferencia de energía potencial gravitatoria</em> entre la entrada y la salida del tubo. La presión atmosférica simplemente «sostiene» la columna en la cima.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ FOOTER ══════════════ -->
+  <div class="greek-band"></div>
+  <div class="footer">
+    <div class="greek-quote">«Ἀριθμὸς δέ τε πάντ᾽ ἐπέοικεν.» — Pitágoras</div>
+    <div class="footer-note" style="font-style:italic; margin-bottom:4px;">"El número gobierna todas las cosas."</div>
+    <div class="footer-note">Copa de Pitágoras · ~530 a.C. · Física del Sifón · Hidrostática · Principio de Pascal · Teorema de Torricelli</div>
+  </div>
+  <div class="greek-band"></div>
+
+</div>
+</body>
+</html>
