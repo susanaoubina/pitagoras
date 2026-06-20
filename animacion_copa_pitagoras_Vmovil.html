@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Copa de Pitágoras – Animación</title>
+<style>
+  :root {
+    --gold:  #C8960C;
+    --gold2: #F0C040;
+    --dark:  #1A1208;
+    --parch: #F5EDD6;
+    --par2:  #EDE0C0;
+    --red:   #8B1A1A;
+    --ink:   #2C1A0E;
+    --stone: #7A6A4A;
+    --safe:  #2D7A2D;
+    --danger:#CC2200;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--dark);
+    color: var(--parch);
+    font-family: Georgia, 'Times New Roman', serif;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .band {
+    height: 6px;
+    background: repeating-linear-gradient(90deg, var(--gold) 0 6px, var(--dark) 6px 12px, var(--gold) 12px 14px, var(--dark) 14px 18px);
+  }
+  .hdr {
+    background: linear-gradient(180deg, #2C1A0E, #1A1208);
+    text-align: center;
+    padding: 14px 16px 10px;
+    border-bottom: 2px solid var(--gold);
+  }
+  .hdr h1 { font-size: 20px; color: var(--gold2); line-height: 1.2; }
+  .hdr p  { font-size: 12px; font-style: italic; color: var(--stone); margin-top: 3px; }
+
+  /* ── TABS ── */
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #2C1A0E;
+    border-bottom: 2px solid var(--gold);
+  }
+  .tab-btn {
+    padding: 12px 8px;
+    border: none;
+    background: transparent;
+    color: var(--stone);
+    font-family: Georgia, serif;
+    font-size: 13px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+    touch-action: manipulation;
+  }
+  .tab-btn.active { color: var(--gold2); border-bottom-color: var(--gold); background: rgba(200,150,12,0.08); }
+
+  /* ── PANELS ── */
+  .panel { display: none; padding: 14px; }
+  .panel.active { display: block; }
+
+  /* ── CANVAS ── */
+  .canvas-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  canvas {
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    background: #0D0804;
+    max-width: 100%;
+    touch-action: none;
+  }
+
+  /* ── BADGE ── */
+  .phase-badge {
+    display: block;
+    text-align: center;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1.5px solid;
+    margin: 0 auto 12px;
+    max-width: 260px;
+    transition: all .4s;
+  }
+  .phase-badge.safe   { color:#6FCF6F; border-color:#6FCF6F; background:rgba(47,122,47,0.15); }
+  .phase-badge.warn   { color:var(--gold2); border-color:var(--gold2); background:rgba(200,150,12,0.1); }
+  .phase-badge.danger { color:#FF6B6B; border-color:#FF6B6B; background:rgba(204,34,0,0.15); animation:pulse .5s infinite alternate; }
+  .phase-badge.empty  { color:var(--stone); border-color:var(--stone); }
+  @keyframes pulse { from{opacity:.7} to{opacity:1} }
+
+  /* ── BOTONES ── */
+  .ctrl-btns { display: flex; gap: 10px; justify-content: center; margin-bottom: 14px; }
+  .btn {
+    padding: 10px 20px;
+    border: 1.5px solid var(--gold);
+    background: transparent;
+    color: var(--gold2);
+    font-family: Georgia, serif;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all .2s;
+    touch-action: manipulation;
+    min-width: 110px;
+  }
+  .btn:active { background: rgba(200,150,12,0.25); }
+  .btn.pause { border-color: var(--stone); color: var(--stone); }
+
+  /* ── DATA CARD ── */
+  .data-card {
+    background: #2C1A0E;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .data-card h3 {
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(200,150,12,0.3);
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+  }
+
+  /* ── MÉTRICAS ── */
+  .metric { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .metric-label { font-size: 13px; color: var(--stone); font-style: italic; }
+  .metric-val   { font-size: 20px; color: var(--gold2); font-weight: 600; }
+  .metric-unit  { font-size: 11px; color: var(--stone); margin-left: 2px; }
+
+  /* ── BARRA NIVEL ── */
+  .lbar-bg  { height: 12px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(200,150,12,0.3); position:relative; overflow:hidden; margin: 6px 0 2px; }
+  .lbar-fg  { height: 100%; border-radius: 6px; transition: width .1s, background .3s; }
+  .lbar-mk  { position:absolute; top:-3px; bottom:-3px; width:2px; background:#FF6B6B; border-radius:1px; }
+  .lbar-lbl { display:flex; justify-content:space-between; font-family:Arial,sans-serif; font-size:9px; color:var(--stone); }
+
+  /* ── FÓRMULA LIVE ── */
+  .formula-live {
+    background: #0D0804;
+    border: 1px solid rgba(200,150,12,0.3);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-style: italic;
+    font-size: 15px;
+    color: #F0D880;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .formula-live span { color: var(--stone); font-size: 11px; display:block; margin-top:2px; font-style:normal; font-family:Arial,sans-serif; }
+
+  /* ── EXPLICACIÓN FASE ── */
+  .phase-explain {
+    font-size: 13px;
+    color: var(--parch);
+    line-height: 1.65;
+    padding: 10px 12px;
+    background: rgba(200,150,12,0.06);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+    min-height: 55px;
+  }
+
+  /* ── FÓRMULAS ESTÁTICAS ── */
+  .feq-box {
+    background: #0D0804;
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    font-style: italic;
+    font-size: 14px;
+    color: #F0D880;
+    text-align: center;
+  }
+
+  /* ══════════════════════════════
+     PANEL 2 SIMULACIÓN
+  ══════════════════════════════ */
+
+  /* ── SLIDER ── */
+  .slider-wrap {
+    background: #2C1A0E;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    padding: 14px 14px 10px;
+    margin-bottom: 14px;
+  }
+  .slider-wrap label {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    background: #1a1208;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--dark);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(200,150,12,0.5);
+  }
+  .sl-labels { display:flex; justify-content:space-between; font-family:Arial,sans-serif; font-size:9px; color:var(--stone); margin-top:6px; }
+
+  /* ── STATUS INDICATOR ── */
+  .status-ind {
+    border-radius: 8px;
+    border: 2px solid;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 14px;
+    transition: all .3s;
+  }
+  .status-ind.safe   { background:rgba(47,122,47,0.12); border-color:#4CAF50; }
+  .status-ind.danger { background:rgba(204,34,0,0.12); border-color:#FF6B6B; animation:pulseborder 1s infinite; }
+  @keyframes pulseborder {
+    0%,100% { box-shadow:0 0 0 0 rgba(255,107,107,0.4); }
+    50%      { box-shadow:0 0 0 8px rgba(255,107,107,0); }
+  }
+  .status-ind .sicon { font-size: 36px; }
+  .status-ind .stxt  { font-family:Arial,sans-serif; font-size:15px; letter-spacing:2px; margin-top:6px; font-weight:700; }
+  .status-ind.safe   .stxt { color:#6FCF6F; }
+  .status-ind.danger .stxt { color:#FF6B6B; }
+  .status-ind .ssub  { font-size:12px; color:var(--stone); margin-top:4px; font-style:italic; }
+
+  /* ── METRICS GRID ── */
+  .mgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+  .mcard { background:#0D0804; border:1px solid rgba(200,150,12,0.35); border-radius:4px; padding:8px 10px; }
+  .mcard .mlbl { font-family:Arial,sans-serif; font-size:8px; letter-spacing:1px; color:var(--gold); text-transform:uppercase; margin-bottom:4px; }
+  .mcard .meq  { font-style:italic; font-size:13px; color:#F0D880; }
+  .mcard .mval { font-family:Arial,sans-serif; font-size:12px; color:#B0D8FF; margin-top:2px; }
+
+  /* ── EXPLAIN BOX ── */
+  .explain-box {
+    background: #2C1A0E;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--parch);
+    line-height: 1.65;
+  }
+  .explain-box h3 { font-family:Arial,sans-serif; font-size:9px; letter-spacing:2px; color:var(--gold); margin-bottom:7px; }
+
+  /* ── FOOTER ── */
+  .footer { text-align:center; padding:14px; border-top:1px solid rgba(200,150,12,0.3); font-size:11px; color:var(--stone); font-style:italic; }
+</style>
+</head>
+<body>
+
+<div class="band"></div>
+<div class="hdr">
+  <h1>⚗️ La Copa de Pitágoras</h1>
+  <p>«Κύλιξ δικαιοσύνης» · Animación Interactiva</p>
+</div>
+<div class="band"></div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(1)">▶ Animación</button>
+  <button class="tab-btn" onclick="switchTab(2)">⚙️ Simulación</button>
+</div>
+
+<!-- ══ PANEL 1: ANIMACIÓN ══ -->
+<div id="p1" class="panel active">
+
+  <div class="canvas-wrap">
+    <canvas id="c1" width="260" height="310"></canvas>
+  </div>
+
+  <div class="phase-badge safe" id="badge1">LLENANDO</div>
+
+  <div class="ctrl-btns">
+    <button class="btn" onclick="restartAnim()">↺ Reiniciar</button>
+    <button class="btn pause" id="pauseBtn" onclick="togglePause()">⏸ Pausar</button>
+  </div>
+
+  <div class="data-card">
+    <h3>📊 Datos en Tiempo Real</h3>
+    <div class="metric">
+      <span class="metric-label">Nivel <em>h</em></span>
+      <span><span class="metric-val" id="m_h">0.0</span><span class="metric-unit"> cm</span></span>
+    </div>
+    <div class="lbar-bg">
+      <div class="lbar-fg" id="lbar" style="width:0%;background:#4CAF50;"></div>
+      <div class="lbar-mk" style="left:58.3%;"></div>
+    </div>
+    <div class="lbar-lbl"><span>0 cm</span><span style="color:#FF6B6B;">h<sub>c</sub>=7cm</span><span>12 cm</span></div>
+
+    <div class="metric" style="margin-top:10px;">
+      <span class="metric-label">Presión base <em>P</em></span>
+      <span><span class="metric-val" id="m_p" style="font-size:16px;">101 325</span><span class="metric-unit"> Pa</span></span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Velocidad salida <em>v</em></span>
+      <span><span class="metric-val" id="m_v" style="font-size:16px;">—</span><span class="metric-unit" id="m_vu"></span></span>
+    </div>
+    <div class="formula-live">P = P₀ + ρ·g·h<span id="fval">= 101 325 Pa</span></div>
+  </div>
+
+  <div class="data-card">
+    <h3>🔍 Fase Actual</h3>
+    <div class="phase-explain" id="explain1">
+      El líquido comienza a llenar la copa. Mientras <em>h ≤ h<sub>c</sub> = 7 cm</em>, la presión es igual en ambas ramas del tubo y el sifón permanece inactivo.
+    </div>
+  </div>
+
+  <div class="data-card">
+    <h3>📐 Fórmulas Clave</h3>
+    <div class="feq-box">h &gt; h<sub>c</sub> ⟹ sifón activo</div>
+    <div class="feq-box">P = P₀ + ρ·g·h &nbsp;|&nbsp; v = √(2g·Δh)</div>
+    <div class="feq-box">P<sub>1</sub> + ½ρv<sub>1</sub>² + ρgh<sub>1</sub> = P<sub>2</sub> + ½ρv<sub>2</sub>² + ρgh<sub>2</sub></div>
+  </div>
+
+</div>
+
+<!-- ══ PANEL 2: SIMULACIÓN ══ -->
+<div id="p2" class="panel">
+
+  <div class="canvas-wrap">
+    <canvas id="c2" width="260" height="310" style="border:1px solid var(--gold);border-radius:6px;background:#0D0804;"></canvas>
+  </div>
+
+  <div class="slider-wrap">
+    <label>🍷 ¿Cuánto vino viertes?</label>
+    <input type="range" id="sl" min="0" max="120" value="0" oninput="updateSim(this.value)">
+    <div class="sl-labels"><span>Vacío</span><span style="color:#FF6B6B;">⚠ h<sub>c</sub></span><span>Lleno</span></div>
+  </div>
+
+  <div class="status-ind safe" id="simSt">
+    <div class="sicon">✅</div>
+    <div class="stxt">SEGURO</div>
+    <div class="ssub">El sifón no está activo · h ≤ h<sub>c</sub></div>
+  </div>
+
+  <div class="mgrid">
+    <div class="mcard">
+      <div class="mlbl">Nivel h</div>
+      <div class="meq">h = <span id="s_h">0.0</span> cm</div>
+      <div class="mval">= <span id="s_hm">0.000</span> m</div>
+    </div>
+    <div class="mcard">
+      <div class="mlbl">Altura crítica h<sub>c</sub></div>
+      <div class="meq" style="color:#FF6B6B;">h<sub>c</sub> = 7.0 cm</div>
+      <div class="mval" style="color:#FF6B6B;">= 0.070 m</div>
+    </div>
+    <div class="mcard">
+      <div class="mlbl">Presión base</div>
+      <div class="meq">P = P₀ + ρgh</div>
+      <div class="mval">= <span id="s_p">101 325</span> Pa</div>
+    </div>
+    <div class="mcard">
+      <div class="mlbl">Presión hidrostática</div>
+      <div class="meq">ΔP = ρgh</div>
+      <div class="mval">= <span id="s_dp">0</span> Pa</div>
+    </div>
+    <div class="mcard">
+      <div class="mlbl">Vel. salida (Torricelli)</div>
+      <div class="meq">v = √(2gΔh)</div>
+      <div class="mval"><span id="s_v">0 m/s</span></div>
+    </div>
+    <div class="mcard">
+      <div class="mlbl">Caudal (⌀ 8 mm)</div>
+      <div class="meq">Q = A·v</div>
+      <div class="mval"><span id="s_q">0 cm³/s</span></div>
+    </div>
+  </div>
+
+  <div class="explain-box">
+    <h3>💡 ¿QUÉ ESTÁ PASANDO?</h3>
+    <div id="s_exp">Mueve el slider para verter vino. Mientras <em>h ≤ h<sub>c</sub> = 7 cm</em>, la copa funciona con normalidad.</div>
+  </div>
+
+</div>
+
+<div class="footer">Copa de Pitágoras · ~530 a.C. · Física del Sifón · Pascal · Torricelli (1643)</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   CONSTANTES
+══════════════════════════════════════════════ */
+const H_MAX = 12, H_C = 7, RHO = 1000, G = 9.81, P0 = 101325;
+
+/* ── Geometría copa para canvas 260×310 ── */
+const C = {
+  cx:260/2, baseY:285, topY:62, botHW:46, topHW:88,
+  colW:22, tubeW:4.5, colTopY:70, arcY:66
+};
+
+function wallHW(y) {
+  const t=(y-C.topY)/(C.baseY-C.topY);
+  return C.topHW + t*(C.botHW-C.topHW);
+}
+function cmPx(cm){ return (cm/H_MAX)*(C.baseY-C.topY-6); }
+
+function drawCup(ctx, hCm, phase, particles) {
+  ctx.clearRect(0,0,260,310);
+  const {cx,baseY,topY,botHW,topHW} = C;
+
+  // Pie
+  ctx.fillStyle='#7A6A44';
+  ctx.beginPath(); ctx.ellipse(cx,298,36,6,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#9A8050';
+  ctx.fillRect(cx-14,287,28,12);
+  ctx.fillRect(cx-7,260,14,28);
+
+  // Interior
+  ctx.fillStyle='#120C06';
+  ctx.beginPath();
+  ctx.moveTo(cx-wallHW(topY),topY); ctx.lineTo(cx-wallHW(baseY),baseY);
+  ctx.lineTo(cx+wallHW(baseY),baseY); ctx.lineTo(cx+wallHW(topY),topY);
+  ctx.closePath(); ctx.fill();
+
+  // Paredes
+  ctx.strokeStyle='#C09050'; ctx.lineWidth=5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(cx-wallHW(topY)+2,topY); ctx.lineTo(cx-wallHW(baseY)+2,baseY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx+wallHW(topY)-2,topY); ctx.lineTo(cx+wallHW(baseY)-2,baseY); ctx.stroke();
+
+  // Borde superior
+  ctx.strokeStyle='#C09050'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.ellipse(cx,topY,wallHW(topY),8,0,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='rgba(150,120,60,0.35)'; ctx.fill();
+
+  // Fondo
+  ctx.strokeStyle='#8A7050'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(cx-wallHW(baseY)+3,baseY); ctx.lineTo(cx+wallHW(baseY)-3,baseY); ctx.stroke();
+
+  // AGUA
+  if(hCm>0.05){
+    const wTop=Math.max(baseY-cmPx(Math.min(hCm,H_MAX)), topY+6);
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx-wallHW(topY)+3,topY); ctx.lineTo(cx-wallHW(baseY)+3,baseY);
+    ctx.lineTo(cx+wallHW(baseY)-3,baseY); ctx.lineTo(cx+wallHW(topY)-3,topY);
+    ctx.closePath(); ctx.clip();
+
+    const wg=ctx.createLinearGradient(cx,wTop,cx,baseY);
+    const c1=phase==='danger'?'rgba(220,80,50,0.5)':phase==='warn'?'rgba(220,180,50,0.45)':'rgba(70,160,220,0.5)';
+    const c2=phase==='danger'?'rgba(160,30,10,0.85)':phase==='warn'?'rgba(160,100,10,0.85)':'rgba(30,80,160,0.85)';
+    wg.addColorStop(0,c1); wg.addColorStop(1,c2);
+    ctx.fillStyle=wg;
+    ctx.fillRect(cx-wallHW(baseY)+3,wTop,(wallHW(baseY)-3)*2,baseY-wTop);
+    if(phase!=='empty'){
+      ctx.strokeStyle='rgba(150,220,255,0.5)'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(cx-wallHW(wTop)+5,wTop); ctx.lineTo(cx+wallHW(wTop)-5,wTop); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // COLUMNA
+  const cGrad=ctx.createLinearGradient(cx-C.colW/2,0,cx+C.colW/2,0);
+  cGrad.addColorStop(0,'#6A5030'); cGrad.addColorStop(0.5,'#C09050'); cGrad.addColorStop(1,'#6A5030');
+  ctx.fillStyle=cGrad;
+  ctx.fillRect(cx-C.colW/2,C.colTopY,C.colW,baseY-C.colTopY);
+
+  // TUBO SIFÓN
+  ctx.fillStyle='#1E4A88';
+  ctx.fillRect(cx-C.tubeW-1,C.colTopY+6,C.tubeW,baseY-C.colTopY-6);
+  ctx.fillRect(cx+1,C.colTopY+6,C.tubeW,baseY-C.colTopY+4);
+  ctx.beginPath(); ctx.arc(cx,C.colTopY+6,C.tubeW+1,Math.PI,0,false);
+  ctx.fillStyle='#1E4A88'; ctx.fill();
+
+  // Cima sifón
+  ctx.beginPath(); ctx.arc(cx,C.arcY,3.5,0,Math.PI*2);
+  ctx.fillStyle='#FF6B6B'; ctx.fill();
+
+  // Agujero base
+  ctx.beginPath(); ctx.ellipse(cx,baseY+1,4,2,0,0,Math.PI*2);
+  ctx.fillStyle='#0D0804'; ctx.fill();
+
+  // Partículas / flujo
+  if(phase==='danger'){
+    ctx.fillStyle='rgba(80,160,255,0.8)';
+    (particles||[]).forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});
+    const a=Math.sin(Date.now()/140)*0.3+0.7;
+    ctx.strokeStyle=`rgba(80,160,255,${a})`; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(cx,baseY+2); ctx.quadraticCurveTo(cx+3,300,cx+1,310); ctx.stroke();
+  }
+
+  // ETIQUETAS
+  const hcY=baseY-cmPx(H_C);
+  ctx.setLineDash([4,3]); ctx.strokeStyle='rgba(255,107,107,0.55)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(cx-wallHW(hcY)+3,hcY); ctx.lineTo(cx+wallHW(hcY)-3,hcY); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#FF6B6B'; ctx.font='8px Arial'; ctx.fillText('hc', cx+wallHW(hcY)-15, hcY-3);
+
+  // h arrow
+  if(hCm>0.3){
+    const wY=baseY-cmPx(hCm/2);
+    ctx.fillStyle='#4A90D9'; ctx.font='italic 12px Georgia'; ctx.fillText('h',cx-wallHW(baseY)-16,wY+4);
+  }
+  ctx.fillStyle='rgba(138,122,92,0.8)'; ctx.font='italic 10px Georgia'; ctx.fillText('P₀',cx-wallHW(topY)+4,topY+15);
+}
+
+/* ══════════════════════════════════════════════
+   ANIMACIÓN AUTOMÁTICA
+══════════════════════════════════════════════ */
+const cv1=document.getElementById('c1'), cx1=cv1.getContext('2d');
+
+let anim={h:0,phase:'filling',paused:false,last:0,particles:[],warnStart:null,emptyStart:null};
+
+function animUI(){
+  const s=anim, hCm=Math.max(0,s.h), hM=hCm/100;
+  const pBase=P0+RHO*G*hM, active=hCm>H_C;
+  const v=active?Math.sqrt(2*G*(hM+0.08)):0;
+
+  document.getElementById('m_h').textContent=hCm.toFixed(1);
+  document.getElementById('m_p').textContent=Math.round(pBase).toLocaleString('es-ES');
+  document.getElementById('m_v').textContent=active?v.toFixed(2):'—';
+  document.getElementById('m_vu').textContent=active?' m/s':'';
+  document.getElementById('fval').textContent='= '+Math.round(pBase).toLocaleString('es-ES')+' Pa';
+
+  const bar=document.getElementById('lbar');
+  bar.style.width=(hCm/H_MAX*100)+'%';
+  bar.style.background=active?'#FF6B6B':hCm>H_C-1?'#F0C040':'#4CAF50';
+
+  const badge=document.getElementById('badge1');
+  let exp='';
+  if(s.phase==='filling'&&!active){
+    badge.className='phase-badge safe'; badge.textContent='LLENANDO';
+    exp='El líquido sube. Como <em>h ≤ h<sub>c</sub> = 7 cm</em>, la presión es igual en ambas ramas del tubo y el sifón permanece inactivo.';
+  } else if(s.phase==='filling'&&active){
+    badge.className='phase-badge warn'; badge.textContent='⚠ NIVEL CRÍTICO';
+    exp='<strong style="color:#F0C040">¡El líquido ha superado h<sub>c</sub>!</strong> El fluido alcanza la cima del tubo en U. El sifón está a punto de activarse.';
+  } else if(s.phase==='draining'){
+    badge.className='phase-badge danger'; badge.textContent='🌊 SIFÓN ACTIVO';
+    exp='<strong style="color:#FF6B6B">¡El sifón se ha cebado!</strong> La diferencia ρg·Δh impulsa el fluido de forma continua. La copa se vacía completamente. <strong>v = '+v.toFixed(2)+' m/s</strong>';
+  } else if(s.phase==='empty'){
+    badge.className='phase-badge empty'; badge.textContent='VACÍA';
+    exp='La copa se ha vaciado. La <em>sophrosyne</em> (moderación) es la única virtud que permite disfrutar la copa de Pitágoras.';
+  }
+  document.getElementById('explain1').innerHTML=exp;
+}
+
+function spawnP(){
+  if(anim.particles.length>14) return;
+  anim.particles.push({x:C.cx-1+Math.random()*2,y:C.colTopY+18,r:2+Math.random()*1.5,vy:2.5+Math.random()*2,life:1});
+}
+
+function loop(ts){
+  const s=anim;
+  if(!s.paused){
+    const dt=Math.min((ts-(s.last||ts))/1000,0.05); s.last=ts;
+    if(s.phase==='filling'){
+      s.h+=2.0*dt;
+      if(s.h>=H_C+0.3){ if(!s.warnStart)s.warnStart=ts; if(ts-s.warnStart>800){s.phase='draining';s.warnStart=null;} }
+      if(s.h>=H_MAX)s.h=H_MAX;
+    }
+    if(s.phase==='draining'){
+      s.h-=6.0*dt; spawnP();
+      if(s.h<=0){s.h=0;s.phase='empty';s.emptyStart=ts;}
+    }
+    if(s.phase==='empty'&&ts-s.emptyStart>1800)restartAnim();
+    s.particles=s.particles.map(p=>({...p,y:p.y+p.vy,life:p.life-dt*1.3})).filter(p=>p.life>0&&p.y<C.baseY+15);
+    const ph=s.phase==='draining'?'danger':s.h<=0?'empty':s.h>H_C?'warn':'safe';
+    drawCup(cx1,s.h,ph,s.particles);
+    animUI();
+  }
+  requestAnimationFrame(loop);
+}
+function restartAnim(){Object.assign(anim,{h:0,phase:'filling',particles:[],warnStart:null,emptyStart:null});}
+function togglePause(){anim.paused=!anim.paused;document.getElementById('pauseBtn').textContent=anim.paused?'▶ Reanudar':'⏸ Pausar';}
+requestAnimationFrame(loop);
+
+/* ══════════════════════════════════════════════
+   SIMULACIÓN INTERACTIVA
+══════════════════════════════════════════════ */
+const cv2=document.getElementById('c2'), cx2=cv2.getContext('2d');
+drawCup(cx2,0,'safe',[]);
+
+function updateSim(val){
+  const hCm=parseFloat(val)/10, hM=hCm/100;
+  const active=hCm>H_C, dh=active?(hM+0.08):0;
+  const v=active?Math.sqrt(2*G*dh):0, A=Math.PI*(0.004)**2;
+  const Q=active?A*v:0, pBase=P0+RHO*G*hM, dP=RHO*G*hM;
+  const phase=active?'danger':hCm>H_C-1?'warn':'safe';
+  drawCup(cx2,hCm,phase,active?[{x:C.cx,y:C.baseY+10,r:3}]:[]);
+
+  const st=document.getElementById('simSt');
+  if(active){
+    st.className='status-ind danger';
+    st.innerHTML=`<div class="sicon">⚠️</div><div class="stxt">SIFÓN ACTIVO</div><div class="ssub">h = ${hCm.toFixed(1)} cm &gt; h<sub>c</sub> = 7 cm · ¡La copa se vacía!</div>`;
+  } else {
+    st.className='status-ind safe';
+    st.innerHTML=`<div class="sicon">✅</div><div class="stxt">SEGURO</div><div class="ssub">h = ${hCm.toFixed(1)} cm ≤ h<sub>c</sub> = 7 cm · Puedes beber tranquilo</div>`;
+  }
+
+  document.getElementById('s_h').textContent=hCm.toFixed(1);
+  document.getElementById('s_hm').textContent=hM.toFixed(3);
+  document.getElementById('s_p').textContent=Math.round(pBase).toLocaleString('es-ES');
+  document.getElementById('s_dp').textContent=Math.round(dP).toLocaleString('es-ES');
+  document.getElementById('s_v').textContent=v.toFixed(3)+' m/s';
+  document.getElementById('s_q').textContent=(Q*1e6).toFixed(2)+' cm³/s';
+
+  const pct=val/120*100;
+  const c=active?'#CC2200':hCm>H_C-1?'#B8860B':'#2D7A2D';
+  document.getElementById('sl').style.background=`linear-gradient(to right,${c} 0%,${c} ${pct}%,#1a1208 ${pct}%)`;
+
+  let ex='';
+  if(hCm<1) ex='Mueve el slider para verter vino. Cuando <em>h &gt; h<sub>c</sub> = 7 cm</em>, el sifón se activa y la copa se vacía.';
+  else if(!active&&hCm<H_C-1) ex=`Nivel actual: <strong>h = ${hCm.toFixed(1)} cm</strong>. El sifón está inactivo. Presión en la base: <strong>P = ${Math.round(pBase).toLocaleString('es-ES')} Pa</strong>. ¡Puedes beber con moderación!`;
+  else if(!active) ex=`<strong style="color:#F0C040">⚠ Cuidado:</strong> solo faltan <strong>${(H_C-hCm).toFixed(1)} cm</strong> para activar el sifón. Presión: <strong>${Math.round(pBase).toLocaleString('es-ES')} Pa</strong>.`;
+  else ex=`<strong style="color:#FF6B6B">🌊 ¡Sifón activo!</strong> Has superado h<sub>c</sub> = 7 cm. La diferencia ΔP = <strong>${Math.round(dP).toLocaleString('es-ES')} Pa</strong> impulsa el fluido a <strong>v = ${v.toFixed(2)} m/s</strong>. Pitágoras: 1 – Codicioso: 0.`;
+  document.getElementById('s_exp').innerHTML=ex;
+}
+
+/* ── TABS ── */
+function switchTab(n){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===n-1));
+  document.getElementById('p1').classList.toggle('active',n===1);
+  document.getElementById('p2').classList.toggle('active',n===2);
+  if(n===2){updateSim(document.getElementById('sl').value);}
+}
+</script>
+</body>
+</html>
